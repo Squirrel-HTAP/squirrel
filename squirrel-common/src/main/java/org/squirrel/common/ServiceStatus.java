@@ -9,4 +9,5 @@ public enum ServiceStatus {
   INITED,
   RUNNING,
   STOPPED,
+  FAILED
 }
