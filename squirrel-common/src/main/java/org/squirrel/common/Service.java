@@ -1,5 +1,7 @@
 package org.squirrel.common;
 
+import java.io.IOException;
+
 /**
  * The base abstract for running service.
  *
@@ -10,11 +12,11 @@ public interface Service extends AutoCloseable {
 
   ServiceStatus getStatus();
 
-  void init(SquirrelConfigs configs);
+  void init();
 
   void start();
 
-  void stop();
+  void stop() throws IOException;
 
   String getName();
 }

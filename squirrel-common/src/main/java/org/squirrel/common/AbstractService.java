@@ -1,8 +1,12 @@
 package org.squirrel.common;
 
+import java.io.IOException;
+import lombok.extern.slf4j.Slf4j;
+
 /**
  * @author meijie
  */
+@Slf4j
 public abstract class AbstractService implements Service {
 
   private ServiceStatus status;
@@ -18,28 +22,43 @@ public abstract class AbstractService implements Service {
     return status;
   }
 
-  protected abstract void serviceInit(SquirrelConfigs configs);
+  protected abstract void serviceInit() throws IOException;
 
   @Override
-  public void init(SquirrelConfigs configs) {
-    serviceInit(configs);
-    this.status = ServiceStatus.INITED;
+  public void init() {
+    try {
+      serviceInit();
+      this.status = ServiceStatus.INITED;
+    } catch (Throwable throwable) {
+      status = ServiceStatus.FAILED;
+      log.error("{} failed when do serviceInit", name, throwable);
+    }
   }
 
-  protected abstract void serviceStart();
+  protected abstract void serviceStart() throws IOException;
 
   @Override
   public void start() {
-    serviceStart();
-    this.status = ServiceStatus.RUNNING;
+    try {
+      serviceStart();
+      this.status = ServiceStatus.RUNNING;
+    } catch (Throwable throwable) {
+      status = ServiceStatus.FAILED;
+      log.error("{} failed when do serviceStart", name, throwable);
+    }
   }
 
-  protected abstract void serviceStop();
+  protected abstract void serviceStop() throws IOException;
 
   @Override
   public void stop() {
-    serviceStop();
-    this.status = ServiceStatus.STOPPED;
+    try {
+      serviceStop();
+      this.status = ServiceStatus.STOPPED;
+    } catch (Throwable throwable) {
+      status = ServiceStatus.FAILED;
+      log.error("{} failed when do serviceStop", name, throwable);
+    }
   }
 
   @Override
