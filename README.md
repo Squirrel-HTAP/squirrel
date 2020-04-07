@@ -1,5 +1,5 @@
 # Squirrel
-[![squirrel_build](https://github.com/Squirrel-HTAP/squirrel/worflows/squirrel_build/badge.svg)](https://github.com/Squirrel-HTAP/squirrel/actions)
+[![squirrel_build](https://github.com/Squirrel-HTAP/squirrel/workflows/squirrel_build/badge.svg)](https://github.com/Squirrel-HTAP/squirrel/actions)
 
 A HTAP database for transaction and analysis workload.
 
