@@ -19,6 +19,7 @@
     <module>squirrel-engine</module>
     <module>squirrel-common</module>
     <module>squirrel-server</module>
+    <module>squirrel-cluster</module>
   </modules>
 
   <properties>
