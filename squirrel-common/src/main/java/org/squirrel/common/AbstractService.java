@@ -32,6 +32,7 @@ public abstract class AbstractService implements Service {
     } catch (Throwable throwable) {
       status = ServiceStatus.FAILED;
       log.error("{} failed when do serviceInit", name, throwable);
+      System.exit(-1);
     }
   }
 
@@ -45,6 +46,7 @@ public abstract class AbstractService implements Service {
     } catch (Throwable throwable) {
       status = ServiceStatus.FAILED;
       log.error("{} failed when do serviceStart", name, throwable);
+      System.exit(-1);
     }
   }
 
@@ -58,6 +60,7 @@ public abstract class AbstractService implements Service {
     } catch (Throwable throwable) {
       status = ServiceStatus.FAILED;
       log.error("{} failed when do serviceStop", name, throwable);
+      System.exit(-1);
     }
   }
 
