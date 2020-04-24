@@ -1,6 +1,5 @@
 package org.squirrel.common;
 
-import com.google.common.base.Preconditions;
 import java.util.Properties;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,16 +15,17 @@ public enum SquirrelConfigs {
   // == Configuration for Meta Server
   // ==========================================================
   META_NODES("meta.nodes", String.class, "meta server nodes.",
-      "localhost:9810,localhost:9811,localhost:9812"),
+      "node1:localhost:9810,node2:localhost:9811,node3:localhost:9812"),
+  META_PORT("meta.port", Integer.class, "meta server port", "9810"),
 
   // ==========================================================
   // == Configuration For Raft.
   // ==========================================================
 
-  RAFT_STORE_FOLDER("raft.store.folder", String.class,
-      "the folder which store raft's log", ""),
-  RAFT_SERVICE_PORT("raft.store.port", Integer.class,
-      "the port which used by store service", "9713");
+  STORE_FOLDER("store.folder", String.class,
+      "the folder which store raft's log", "/home/meijie/log"),
+  STORE_PORT("store.port", Integer.class,
+      "the port which used by store service", "9710");
 
   private static Properties properties;
   private String key;
@@ -34,7 +34,9 @@ public enum SquirrelConfigs {
   private String defaultValue;
 
   public String getString() {
-    Preconditions.checkNotNull(properties);
+    if (properties == null) {
+      return defaultValue;
+    }
     return properties.getProperty(key, defaultValue);
   }
 

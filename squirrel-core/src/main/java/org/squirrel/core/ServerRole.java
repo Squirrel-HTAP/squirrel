@@ -4,6 +4,6 @@ package org.squirrel.core;
  * @author meijie
  */
 public enum ServerRole {
-  META_SERVER,
+  SQU__META_SERVER,
   STORE_SERVER
 }
