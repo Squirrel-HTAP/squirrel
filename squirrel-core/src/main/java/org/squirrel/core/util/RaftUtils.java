@@ -16,7 +16,7 @@ public class RaftUtils {
   private static final RaftGroupId groupId = RaftGroupId.randomId();
 
   public static RaftGroup buildRaftGroup(ServerRole serverRole) {
-    if (ServerRole.SQU__META_SERVER.equals(serverRole)) {
+    if (ServerRole.META_SERVER.equals(serverRole)) {
       return RaftGroup.valueOf(groupId,
           parseRaftPeers(SquirrelConfigs.META_NODES.getString()));
     } else if (ServerRole.STORE_SERVER.equals(serverRole)) {
