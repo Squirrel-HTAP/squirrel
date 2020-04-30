@@ -1,31 +1,44 @@
 package org.squirrel.core;
 
+import com.google.common.base.Preconditions;
+import java.net.InetAddress;
 import java.net.UnknownHostException;
-import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import org.apache.commons.lang3.StringUtils;
 
 /**
  * @author meijie
  */
+@Builder
 @Getter
-@AllArgsConstructor
 public class Address {
 
-  private String nodeId;
   private String host;
   private int port;
 
-  public static Address fromPort(String nodeId, int port) throws UnknownHostException {
-//    InetAddress address = InetAddress.getLocalHost();
-//    return new Address(address.getHostName(), port);
-    return new Address(nodeId, "127.0.0.1", port);
+  public static Address defaultAddress() throws UnknownHostException {
+    return fromPort(9120);
   }
 
   public static Address fromPort(int port) throws UnknownHostException {
-//    InetAddress address = InetAddress.getLocalHost();
-//    return new Address(address.getHostName(), port);
-    return fromPort("localhost", port);
+    InetAddress address = InetAddress.getLocalHost();
+    return from(address.getHostAddress(), port);
+  }
+
+
+  public static Address from(String host, int port) {
+    Preconditions.checkNotNull(host);
+    Preconditions.checkNotNull(port);
+    return Address.builder()
+        .host(host)
+        .port(port)
+        .build();
+  }
+
+  public static void main(String[] args) throws UnknownHostException {
+    Address address = fromPort(3306);
+    System.out.println(address.toString());
   }
 
   public static Address from(String nodeId, String address) {
@@ -33,7 +46,7 @@ public class Address {
     String host = StringUtils.substring(address, 0, lastColon);
     String port = StringUtils.substring(address, lastColon);
     if (StringUtils.isNumeric(port)) {
-      return new Address(nodeId, host, Integer.parseInt(port));
+      return new Address(host, Integer.parseInt(port));
     }
     throw new IllegalArgumentException("wrong node address " + address);
   }

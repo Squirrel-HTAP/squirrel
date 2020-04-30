@@ -18,6 +18,7 @@ import org.apache.ratis.statemachine.impl.BaseStateMachine;
 import org.squirrel.common.AbstractService;
 import org.squirrel.common.SquirrelConfigs;
 import org.squirrel.core.Address;
+import org.squirrel.core.Node;
 import org.squirrel.core.ServerRole;
 import org.squirrel.core.util.RaftUtils;
 
@@ -30,7 +31,7 @@ import org.squirrel.core.util.RaftUtils;
 public class StoreService extends AbstractService {
 
   private final ServerRole serverRole;
-  private Address address;
+  private Node node;
   private RaftServer raftServer;
   private BaseStateMachine storeStateMachine;
 
@@ -39,10 +40,10 @@ public class StoreService extends AbstractService {
     this.serverRole = serverRole;
   }
 
-  public StoreService(ServerRole serverRole, Address address) {
+  public StoreService(ServerRole serverRole, Node node) {
     super("Store Service");
     this.serverRole = serverRole;
-    this.address = address;
+    this.node = node;
   }
 
   public void register(BaseStateMachine storeStateMachine) {
@@ -53,12 +54,12 @@ public class StoreService extends AbstractService {
   protected void serviceInit() throws IOException {
     RaftGroup raftGroup = RaftUtils.buildRaftGroup(this.serverRole);
     RaftProperties properties = buildRaftProperties();
-    if (this.address == null) {
-      this.address = buildAddress();
+    if (this.node == null) {
+      this.node = Node.defaultNode();
     }
 
     raftServer = RaftServer.newBuilder()
-        .setServerId(RaftPeerId.valueOf(address.getNodeId()))
+        .setServerId(RaftPeerId.valueOf(node.getNodeId()))
         .setGroup(raftGroup)
         .setProperties(properties)
         .setStateMachine(storeStateMachine)
@@ -67,18 +68,28 @@ public class StoreService extends AbstractService {
 
   private RaftProperties buildRaftProperties() {
     RaftProperties properties = new RaftProperties();
-    List<File> storeFileList = Lists.newArrayList(
-        new File(SquirrelConfigs.STORE_FOLDER.getString() + "/" + address.getPort()));
+    List<File> storeFileList;
+    if (ServerRole.META_SERVER.equals(serverRole)) {
+      storeFileList = Lists.newArrayList(
+          new File(SquirrelConfigs.META_STORE_FOLDER.getString()));
+    } else {
+      storeFileList = Lists.newArrayList(
+          new File(SquirrelConfigs.STORE_FOLDER.getString()));
+    }
     RaftServerConfigKeys.setStorageDirs(properties, storeFileList);
     RaftConfigKeys.Rpc.setType(properties, SupportedRpcType.NETTY);
-    NettyConfigKeys.Server.setPort(properties, address.getPort());
+    NettyConfigKeys.Server.setPort(properties, node.getAddress().getPort());
     return properties;
+  }
+
+  private Node buildNode() throws UnknownHostException {
+    return Node.defaultNode();
   }
 
   private Address buildAddress() throws UnknownHostException {
     if (ServerRole.STORE_SERVER.equals(serverRole)) {
       return Address.fromPort(SquirrelConfigs.META_PORT.getInt());
-    } else if (ServerRole.SQU__META_SERVER.equals(serverRole)) {
+    } else if (ServerRole.META_SERVER.equals(serverRole)) {
       return Address.fromPort(SquirrelConfigs.STORE_PORT.getInt());
     } else {
       throw new IllegalArgumentException("Unknown Server Role " + serverRole.name());
