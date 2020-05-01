@@ -13,6 +13,11 @@
   <name>squirrel-server</name>
 
   <dependencies>
+    <dependency>
+      <groupId>org.squirrel</groupId>
+      <artifactId>squirrel-core</artifactId>
+      <version>${project.version}</version>
+    </dependency>
   </dependencies>
 
 </project>

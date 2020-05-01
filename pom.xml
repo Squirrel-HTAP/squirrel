@@ -22,6 +22,7 @@
     <module>squirrel-cluster</module>
   </modules>
 
+
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven.compiler.source>1.8</maven.compiler.source>
@@ -32,6 +33,7 @@
     <guava.version>28.2-jre</guava.version>
     <apache.common.version>3.10</apache.common.version>
     <slf4j.version>1.7.30</slf4j.version>
+
   </properties>
 
   <dependencies>
@@ -42,6 +44,13 @@
       <scope>provided</scope>
     </dependency>
 
+    <dependency>
+      <groupId>com.github.spotbugs</groupId>
+      <artifactId>spotbugs-annotations</artifactId>
+      <version>3.1.12</version>
+      <scope>provided</scope>
+      <optional>true</optional>
+    </dependency>
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter-api</artifactId>
@@ -79,6 +88,21 @@
           <artifactId>maven-resources-plugin</artifactId>
           <version>3.0.2</version>
         </plugin>
+
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-enforcer-plugin</artifactId>
+          <version>3.0.0-M3</version>
+          <executions>
+            <execution>
+              <id>default</id>
+              <phase>validate</phase>
+              <goals>
+                <goal>enforce</goal>
+              </goals>
+            </execution>
+          </executions>
+        </plugin>
         <plugin>
           <artifactId>maven-compiler-plugin</artifactId>
           <version>3.8.0</version>
@@ -87,6 +111,8 @@
             <target>8</target>
           </configuration>
         </plugin>
+
+
         <plugin>
           <artifactId>maven-surefire-plugin</artifactId>
           <version>2.22.1</version>
@@ -133,7 +159,147 @@
             </execution>
           </executions>
         </plugin>
+        <plugin>
+          <groupId>org.basepom.maven</groupId>
+          <artifactId>duplicate-finder-maven-plugin</artifactId>
+          <version>1.4.0</version>
+          <executions>
+            <execution>
+              <id>default</id>
+              <phase>process-test-classes</phase>
+              <goals>
+                <goal>check</goal>
+              </goals>
+            </execution>
+          </executions>
+        </plugin>
+
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-dependency-plugin</artifactId>
+          <version>3.1.2</version>
+          <executions>
+            <execution>
+              <id>default</id>
+              <phase>process-test-classes</phase>
+              <goals>
+                <goal>analyze-only</goal>
+                <goal>analyze-duplicate</goal>
+                <goal>analyze-dep-mgt</goal>
+              </goals>
+            </execution>
+          </executions>
+        </plugin>
+        <plugin>
+          <groupId>com.ning.maven.plugins</groupId>
+          <artifactId>maven-dependency-versions-check-plugin</artifactId>
+          <version>2.0.4</version>
+          <configuration>
+            <failBuildInCaseOfConflict>true</failBuildInCaseOfConflict>
+          </configuration>
+          <executions>
+            <execution>
+              <id>default</id>
+              <phase>validate</phase>
+              <goals>
+                <goal>check</goal>
+              </goals>
+            </execution>
+          </executions>
+        </plugin>
+
+        <plugin>
+          <groupId>com.hubspot.maven.plugins</groupId>
+          <artifactId>dependency-scope-maven-plugin</artifactId>
+          <version>0.10</version>
+          <executions>
+            <execution>
+              <goals>
+                <goal>check</goal>
+              </goals>
+            </execution>
+          </executions>
+        </plugin>
+
+        <plugin>
+          <groupId>com.github.spotbugs</groupId>
+          <artifactId>spotbugs-maven-plugin</artifactId>
+          <version>3.1.12</version>
+          <executions>
+            <execution>
+              <id>default</id>
+              <phase>validate</phase>
+              <goals>
+                <goal>check</goal>
+              </goals>
+            </execution>
+          </executions>
+        </plugin>
+
+        <plugin>
+          <groupId>org.jacoco</groupId>
+          <artifactId>jacoco-maven-plugin</artifactId>
+          <version>0.8.5</version>
+          <executions>
+            <execution>
+              <id>default-prepare-agent</id>
+              <goals>
+                <goal>prepare-agent</goal>
+              </goals>
+            </execution>
+            <execution>
+              <id>default-report</id>
+              <goals>
+                <goal>report</goal>
+              </goals>
+            </execution>
+            <execution>
+              <id>default-check</id>
+              <goals>
+                <goal>check</goal>
+              </goals>
+              <configuration>
+                <rules>
+                  <!--  implementation is needed only for Maven 2  -->
+                  <rule>
+                    <element>BUNDLE</element>
+                    <limits>
+                      <!--  implementation is needed only for Maven 2  -->
+                      <limit>
+                        <counter>COMPLEXITY</counter>
+                        <value>COVEREDRATIO</value>
+                        <minimum>0.60</minimum>
+                      </limit>
+                    </limits>
+                  </rule>
+                </rules>
+              </configuration>
+            </execution>
+          </executions>
+        </plugin>
       </plugins>
+
     </pluginManagement>
   </build>
+
+  <licenses>
+    <license>
+      <name>Apache 2</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+      <distribution>repo</distribution>
+      <comments>A business-friendly OSS license</comments>
+    </license>
+  </licenses>
+
+  <developers>
+    <developer>
+      <name>meijie</name>
+      <id>meijies</id>
+      <email>meijies(AT)gmail(DOT)com</email>
+      <roles>
+        <role>Developer</role>
+      </roles>
+      <timezone>+8</timezone>
+    </developer>
+  </developers>
 </project>
