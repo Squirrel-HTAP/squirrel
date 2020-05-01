@@ -36,7 +36,7 @@ public class StoreService extends AbstractService {
   private BaseStateMachine storeStateMachine;
 
   public StoreService(ServerRole serverRole) throws UnknownHostException {
-    super("Store Service");
+    super(StoreService.class.getName());
     this.serverRole = serverRole;
   }
 

@@ -9,12 +9,12 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public abstract class AbstractService implements Service {
 
-  private ServiceStatus status;
+  protected ServiceStatus status;
   private final String name;
 
   public AbstractService(String name) {
-    this.name = name;
     this.status = ServiceStatus.CREATED;
+    this.name = name;
   }
 
   @Override
@@ -27,8 +27,8 @@ public abstract class AbstractService implements Service {
   @Override
   public void init() {
     try {
-      serviceInit();
       this.status = ServiceStatus.INITED;
+      serviceInit();
     } catch (Throwable throwable) {
       status = ServiceStatus.FAILED;
       log.error("{} failed when do serviceInit", name, throwable);
@@ -41,8 +41,8 @@ public abstract class AbstractService implements Service {
   @Override
   public void start() {
     try {
-      serviceStart();
       this.status = ServiceStatus.RUNNING;
+      serviceStart();
     } catch (Throwable throwable) {
       status = ServiceStatus.FAILED;
       log.error("{} failed when do serviceStart", name, throwable);
@@ -55,8 +55,8 @@ public abstract class AbstractService implements Service {
   @Override
   public void stop() {
     try {
-      serviceStop();
       this.status = ServiceStatus.STOPPED;
+      serviceStop();
     } catch (Throwable throwable) {
       status = ServiceStatus.FAILED;
       log.error("{} failed when do serviceStop", name, throwable);
